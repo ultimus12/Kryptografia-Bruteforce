@@ -1,0 +1,3 @@
+Dobra tu pokazujemy że sól nam utrudnia bo nie możemy tych rainbowtables użyć
+Ale sama szybkość algorytmu dosłownie sprawia że sprawdzamy miliony kombinacji na sekundę
+Więc nie używamy hydry nigdzie tak naprawdę, ale tu też można użyć jakby się chciało
