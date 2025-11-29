@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja</title>
+    <style>
+        /* TUTAJ WKLEJ TEN SAM STYL CO W LOGIN.HTML */
+        /* Styl dla całej strony */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1c1c1e;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #3c3c3e;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dcdce1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745; /* Zmieniłem na zielony dla rozróżnienia */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .error {
+            color: #d93025;
+            background-color: #fbeae9;
+            border: 1px solid #fbd0ce;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Nowy styl dla linku na dole */
+        .switch-page {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .switch-page a {
+            color: #007aff;
+            text-decoration: none;
+        }
+        .switch-page a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Utwórz konto</h2>
+        
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        
+        <form method="POST" action="/register">
+            <div class="input-group">
+                <label for="username">Nazwa użytkownika:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Hasło:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <button type="submit">Zarejestruj się</button>
+            </div>
+        </form>
+
+        <div class="switch-page">
+            Masz już konto? <a href="{{ url_for('login') }}">Zaloguj się</a>
+        </div>
+    </div>
+</body>
+</html>
