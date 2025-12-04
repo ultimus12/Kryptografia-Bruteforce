@@ -32,16 +32,12 @@ def smart_hash(password_input):
     """
     Wersja ulepszona: usuwa białe znaki i informuje w konsoli co robi.
     """
-    # 1. Usuwamy spacje i entery z początku/końca
     clean_input = password_input.strip()
     
-    # 2. Logika wykrywania HEX
     try:
-        # Sprawdzamy czy wygląda jak długi hex string
         if len(clean_input) > 64: 
             binary_data = binascii.unhexlify(clean_input)
             
-            # Jeśli tu doszliśmy, to znaczy że to poprawny HEX!
             print(f"[DEBUG] Wykryto tryb HEX! Długość bajtów: {len(binary_data)}")
             final_hash = hashlib.md5(binary_data).hexdigest()
             print(f"[DEBUG] Wyliczony hash MD5: {final_hash}")
@@ -50,7 +46,6 @@ def smart_hash(password_input):
     except (binascii.Error, ValueError) as e:
         print(f"[DEBUG] To NIE jest poprawny hex (Błąd: {e}). Hashuję jako tekst.")
     
-    # 3. Fallback: Hashowanie zwykłego tekstu (dla Hydry itp.)
     return hashlib.md5(password_input.encode()).hexdigest()
 
 @app.route('/')
@@ -106,7 +101,6 @@ def login():
     return render_template('login.html', error=error)
 
 if __name__ == '__main__':
-    # Usuwamy starą bazę żeby nie było śmieci
     if os.path.exists(DATABASE):
         os.remove(DATABASE)
     init_db()

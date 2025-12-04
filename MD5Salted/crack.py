@@ -7,21 +7,18 @@ import sys
 # --- KONFIGURACJA ---
 DATABASE = 'db_salted.db'
 TARGET_USER = 'amogus' 
-WORDLIST_FILE = 'rockyou.txt' # Nazwa pliku słownika
+WORDLIST_FILE = 'rockyou.txt' 
 
-# Pieprz musi być ten sam, co w server_salted.py
 PEPPER = "TajnySkladnik_Chroniac_Przed_RainbowTables"
 
 def crack_salted_rockyou():
     print(f"--- ATAK SŁOWNIKOWY NA BAZĘ SOLONĄ (ROCKYOU) ---")
     
-    # 1. Sprawdź czy plik słownika istnieje
     if not os.path.exists(WORDLIST_FILE):
         print(f"[BŁĄD] Nie znaleziono pliku '{WORDLIST_FILE}'!")
         print("Pobierz go i umieść w tym samym folderze.")
         return
 
-    # 2. Wykradnij Hash i Sól z bazy
     try:
         conn = sqlite3.connect(DATABASE)
         conn.row_factory = sqlite3.Row
@@ -48,20 +45,16 @@ def crack_salted_rockyou():
     start_time = time.perf_counter()
     attempts = 0
     
-    # 3. Otwieramy plik rockyou (tryb latin-1 jest bezpieczniejszy dla tego pliku niż utf-8)
     try:
         with open(WORDLIST_FILE, 'r', encoding='latin-1', errors='ignore') as f:
             for line in f:
                 attempts += 1
                 
-                # Usuwamy znak nowej linii (\n) z końca
                 guess = line.strip()
                 
-                # Konstrukcja hasha: Hasło_ze_słownika + Sól_z_bazy + Pieprz
                 combined = guess + stolen_salt + PEPPER
                 calculated_hash = hashlib.md5(combined.encode()).hexdigest()
                 
-                # Porównanie
                 if calculated_hash == stolen_hash:
                     end_time = time.perf_counter()
                     duration = end_time - start_time
@@ -75,7 +68,6 @@ def crack_salted_rockyou():
                     print(f"Prędkość:    {attempts/duration:,.0f} haseł/sek")
                     return
 
-                # Pasek postępu co 100,000 haseł (żeby nie zaspamować konsoli)
                 if attempts % 100000 == 0:
                     sys.stdout.write(f"\r[W TOKU] Sprawdzono {attempts:,} haseł...")
                     sys.stdout.flush()

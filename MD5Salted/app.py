@@ -7,7 +7,6 @@ app = Flask(__name__)
 app.secret_key = "inny_sekretny_klucz"
 DATABASE = 'db_salted.db'
 
-# PEPPER: Stała wartość ukryta w kodzie (nie w bazie danych)
 PEPPER = "TajnySkladnik_Chroniac_Przed_RainbowTables"
 
 def get_db():
@@ -19,7 +18,6 @@ def init_db():
     with app.app_context():
         db = get_db()
         cursor = db.cursor()
-        # Tabela przechowuje hash ORAZ unikalną sól dla każdego usera
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users_salted (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +30,6 @@ def init_db():
         db.close()
         print(f"[{DATABASE}] Baza danych zainicjalizowana (MD5 + Salt + Pepper).")
 
-# --- TRASY ---
 
 @app.route('/')
 def index():
@@ -45,13 +42,10 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        # 1. Generujemy losową sól (16 bajtów zamienione na hex)
         user_salt = os.urandom(16).hex()
 
-        # 2. Tworzymy silniejszy ciąg: Hasło + Sól + Pieprz
         combined_data = password + user_salt + PEPPER
         
-        # 3. Hashujemy całość (nadal MD5, ale wsad jest unikalny)
         hashed_password = hashlib.md5(combined_data.encode()).hexdigest()
 
         db = get_db()
@@ -81,11 +75,9 @@ def login():
         db.close()
 
         if user:
-            # 1. Pobieramy sól z bazy danych dla tego konkretnego użytkownika
             stored_salt = user['salt']
             stored_hash = user['password_hash']
             
-            # 2. Odtwarzamy proces hashowania
             check_combined = password + stored_salt + PEPPER
             check_hash = hashlib.md5(check_combined.encode()).hexdigest()
             
@@ -100,5 +92,4 @@ def login():
 
 if __name__ == '__main__':
     init_db()
-    # Uruchamiamy na porcie 5002
     app.run(debug=True, port=5002)

@@ -1,9 +1,8 @@
 import srp
 import requests
 import binascii
-import getpass # Do ukrywania hasła w konsoli
+import getpass 
 
-# Adres serwera
 BASE_URL = "http://127.0.0.1:5000"
 
 def hex_to_bytes(h): return binascii.unhexlify(h)
@@ -13,7 +12,6 @@ def register_user(username, password):
     print(f"\n--- REJESTRACJA UŻYTKOWNIKA: {username} ---")
     print("1. Klient: Generuję Sól i Verifier lokalnie...")
     
-    # To się dzieje TYLKO na komputerze klienta!
     salt, vkey = srp.create_salted_verification_key(username, password)
     
     print(f"   [SECRET] Password: {password} (Nigdy nie wysyłane!)")
@@ -26,7 +24,6 @@ def register_user(username, password):
         'verifier': bytes_to_hex(vkey)
     }
 
-    # Wysyłamy do serwera tylko bezpieczne dane
     r = requests.post(f"{BASE_URL}/register", json=payload)
     if r.status_code == 201:
         print("2. Serwer: Rejestracja zakończona sukcesem.")
@@ -36,7 +33,6 @@ def register_user(username, password):
 def login_srp(username, password):
     print(f"\n--- LOGOWANIE SRP (HANDSHAKE) ---")
     
-    # KROK 1: Klient generuje klucz efemeryczny A
     print("1. Klient: Generuję klucz publiczny A...")
     usr = srp.User(username, password)
     uname, A = usr.start_authentication()
@@ -44,7 +40,6 @@ def login_srp(username, password):
     print(f"   [SENDING] Username: {username}")
     print(f"   [SENDING] A: {bytes_to_hex(A)[:20]}...")
     
-    # Wysyłamy A do serwera
     response_1 = requests.post(f"{BASE_URL}/handshake/start", json={
         'username': username,
         'A': bytes_to_hex(A)
@@ -62,7 +57,6 @@ def login_srp(username, password):
     print(f"   [RECEIVED] Salt: {bytes_to_hex(salt)}")
     print(f"   [RECEIVED] B:    {bytes_to_hex(B)[:20]}...")
 
-    # KROK 2: Klient oblicza dowód M (Proof)
     print("3. Klient: Obliczam dowód matematyczny M...")
     if not salt or not B:
         print("Błąd: Puste dane od serwera.")
@@ -76,7 +70,6 @@ def login_srp(username, password):
 
     print(f"   [SENDING] M (Dowód): {bytes_to_hex(M)[:20]}...")
 
-    # Wysyłamy M do serwera
     response_2 = requests.post(f"{BASE_URL}/handshake/verify", json={
         'username': username,
         'M': bytes_to_hex(M)
@@ -86,14 +79,10 @@ def login_srp(username, password):
         data_2 = response_2.json()
         HAMK_server = hex_to_bytes(data_2['HAMK'])
         
-        # KROK 3: Klient weryfikuje dowód serwera
         print("4. Serwer: Zaakceptował dowód! Odesłał swój HAMK.")
         
-        # Weryfikacja czy serwer też zna hasło (wzajemne uwierzytelnianie)
         usr.verify_session(HAMK_server)
         
-        # Jeśli verify_session nie rzuciło błędu (w nowszych bibliotekach może zwracać bool)
-        # Zakładamy sukces jeśli serwer dał 200 OK
         print(f"\n[SUKCES] ZALOGOWANO BEZPIECZNIE! Serwer zweryfikowany.")
         print(f"Wiadomość z serwera: {data_2['message']}")
     else:
@@ -103,10 +92,8 @@ if __name__ == "__main__":
     import sys
     print("APLIKACJA KLIENTA (SECURE SRP)")
     
-    # Prosta obsługa menu
     mode = input("Wybierz tryb (1=Rejestracja, 2=Logowanie): ")
     user = input("Podaj login: ")
-    # getpass ukrywa wpisywanie hasła w konsoli (jak w linuxie)
     pw = getpass.getpass("Podaj hasło: ") 
 
     if mode == '1':
