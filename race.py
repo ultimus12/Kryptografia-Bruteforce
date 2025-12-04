@@ -29,29 +29,24 @@ def draw_progress_bar(current, total, name, color):
     arrow = '█' * int(percent/100 * bar_length)
     spaces = '-' * (bar_length - len(arrow))
     
-    # \r powoduje powrót karetki na początek linii (nadpisywanie)
     sys.stdout.write(f"\r{color}{name:<15} |{arrow}{spaces}| {int(percent)}% {Colors.END}")
     sys.stdout.flush()
 
-# --- 1. MD5 ---
 def benchmark_md5():
     target = hashlib.md5(PASSWORD.encode()).hexdigest()
     start = time.perf_counter()
     
-    # Aktualizujemy pasek co 50000 operacji (żeby nie mulić konsoli)
     step = 50000
     for i in range(0, ITERATIONS_MD5, step):
-        # Symulacja paczki obliczeń
         for _ in range(step):
             hashlib.md5(b"nietrafione").hexdigest()
         
         draw_progress_bar(i + step, ITERATIONS_MD5, "MD5 (Słabe)", Colors.RED)
 
     end = time.perf_counter()
-    sys.stdout.write("\n") # Nowa linia po zakończeniu paska
+    sys.stdout.write("\n") 
     return ITERATIONS_MD5 / (end - start)
 
-# --- 2. SHA256 + Salt ---
 def benchmark_sha256_salt():
     salt = os.urandom(16).hex()
     target = hashlib.sha256((PASSWORD + salt).encode()).hexdigest()
@@ -68,7 +63,6 @@ def benchmark_sha256_salt():
     sys.stdout.write("\n")
     return ITERATIONS_SHA / (end - start)
 
-# --- 3. SRP ---
 def benchmark_srp():
     username = "admin"
     salt, verifier = srp.create_salted_verification_key(username, PASSWORD)
@@ -77,7 +71,6 @@ def benchmark_srp():
     
     start = time.perf_counter()
     
-    # SRP jest wolne, więc aktualizujemy pasek co 1 operację
     step = 1
     for i in range(0, ITERATIONS_SRP, step):
         usr = srp.User(username, "nietrafione")
@@ -103,7 +96,7 @@ def benchmark_srp():
     return ITERATIONS_SRP / (end - start)
 
 def main():
-    os.system('cls' if os.name == 'nt' else 'clear') # Czyści ekran
+    os.system('cls' if os.name == 'nt' else 'clear') 
     print(f"{Colors.HEADER}{Colors.BOLD}=== WIELKI WYŚCIG KRYPTOGRAFICZNY ==={Colors.END}")
     print("Symulacja obciążenia CPU dla różnych metod łamania haseł...\n")
 
@@ -115,19 +108,15 @@ def main():
     print("\n" + "="*60)
     print(f"{Colors.BOLD}WYNIKI KOŃCOWE (PRĘDKOŚĆ ŁAMANIA):{Colors.END}")
     
-    # Formatowanie liczb
     print(f"{Colors.RED}MD5:          {speed_md5:,.0f} haseł/sek {Colors.END}")
     print(f"{Colors.BLUE}SHA256+Salt:  {speed_sha:,.0f} haseł/sek {Colors.END}")
     print(f"{Colors.GREEN}SRP Protocol: {speed_srp:,.0f} haseł/sek {Colors.END}")
     
-    # Wizualizacja różnicy (wykres słupkowy na końcu)
     print("\n" + "-"*60)
     print("WIZUALIZACJA PRZEPAŚCI (Skala Logarytmiczna):")
-    # Sztuczna normalizacja do wyświetlania, bo MD5 jest 10000x szybsze
     
     def draw_final_bar(speed, color):
         import math
-        # Logarytm pozwala pokazać różnice rzędów wielkości na jednym ekranie
         width = int(math.log10(speed)) * 8 
         bar = '█' * width
         return f"{color}{bar} ({speed:,.0f}){Colors.END}"
