@@ -63,7 +63,7 @@ Aby skutecznie zabezpieczyć hasła, nie wystarczy ukryć ich pod hashem. Należ
 Projekt udało się zrealizować niemal w 100% zgodnie z pierwotnymi założeniami. Zaimplementowano działające przykłady dla wszystkich trzech poziomów bezpieczeństwa.
 
 *   **Co się udało**: Stworzenie w pełni funkcjonalnych aplikacji demonstrujących różnice w bezpieczeństwie oraz napisanie narzędzia wizualizującego różnice w prędkości łamania haseł.
-*   **Uwagi**: Moduł benchmarku (`race.py`) jest symulacją mającą na celu zobrazowanie rzędu wielkości problemu. W środowisku produkcyjnym testy wydajności mogłyby być bardziej rygorystyczne, jednak obecna forma w zupełności wystarcza do celów edukacyjnych i prezentacyjnych.
+*   **Uwagi**: Moduł benchmarku (`race.py`) jest symulacją mającą na celu zobrazowanie rzędu wielkości problemu. W środowisku produkcyjnym testy wydajności mogłyby być bardziej rygorystyczne.
 
 ## Instrukcja Uruchomienia / How to Run
 
