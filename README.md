@@ -1,5 +1,7 @@
 # Kryptografia-Bruteforce
 
+**GitHub Repository:** [https://github.com/ultimus12/Kryptografia-Bruteforce](https://github.com/ultimus12/Kryptografia-Bruteforce)
+
 Projekt ten ma na celu demonstrację różnych podejść do przechowywania haseł i uwierzytelniania, oraz analizę ich odporności na ataki typu brute-force (siłowe).
 
 Repozytorium zawiera trzy poziomy zabezpieczeń ("Słabe", "Średnie", "Silne") oraz skrypt porównujący ich wydajność.
@@ -49,21 +51,65 @@ W głównym folderze znajduje się skrypt `race.py`, który symuluje atak na wsz
 ### Wnioski Końcowe
 Aby skutecznie zabezpieczyć hasła, nie wystarczy ukryć ich pod hashem. Należy użyć algorytmu (lub protokołu), który jest **wolny** (slow hashing), aby drastycznie zwiększyć koszt ataku dla hakera. W tym projekcie rolę "bezpiecznika" pełni protokół SRP, który naturalnie spowalnia proces weryfikacji.
 
-## Jak uruchomić?
+## Zespół Projektowy i Podział Obowiązków
 
-Wymagany Python 3. Zainstaluj biblioteki:
+| Osoba | Zadania |
+| :--- | :--- |
+| **Maciej Popławski** | Pomysł, Planowanie struktury projektu, Implementacja techniczna (Backend & Frontend) |
+| **Klaudiusz Kapała** | Opracowanie teorii kryptograficznej, Przygotowanie prezentacji, Weryfikacja i końcowe szlify projektu |
+
+## Koncepcja i Realizacja
+
+Projekt udało się zrealizować niemal w 100% zgodnie z pierwotnymi założeniami. Zaimplementowano działające przykłady dla wszystkich trzech poziomów bezpieczeństwa.
+
+*   **Co się udało**: Stworzenie w pełni funkcjonalnych aplikacji demonstrujących różnice w bezpieczeństwie oraz napisanie narzędzia wizualizującego różnice w prędkości łamania haseł.
+*   **Uwagi**: Moduł benchmarku (`race.py`) jest symulacją mającą na celu zobrazowanie rzędu wielkości problemu. W środowisku produkcyjnym testy wydajności mogłyby być bardziej rygorystyczne, jednak obecna forma w zupełności wystarcza do celów edukacyjnych i prezentacyjnych.
+
+## Instrukcja Uruchomienia / How to Run
+
+### Wymagania
+Upewnij się, że masz zainstalowanego Pythona 3. Następnie zainstaluj wymagane biblioteki:
 
 ```bash
 pip install flask srp
 ```
 
-1. **Uruchomienie Benchmarku**:
-   ```bash
-   python race.py
-   ```
-2. **Atak słownikowy na MD5Salted**:
-   ```bash
-   cd MD5Salted
-   # upewnij się, że masz plik rockyou.txt (wypakowany)
-   python crack.py
-   ```
+### 1. Uruchomienie aplikacji webowych (Prezentacja)
+
+Możesz uruchomić każdą z aplikacji oddzielnie w osobnych terminalach, aby przetestować działanie logowania i rejestracji.
+
+*   **Aplikacja MD5 (Podatna, Port 5001):**
+    ```bash
+    python MD5/app.py
+    ```
+    Otwórz w przeglądarce: http://127.0.0.1:5001
+
+*   **Aplikacja MD5 + Salt (Lepsza, Port 5002):**
+    ```bash
+    python MD5Salted/app.py
+    ```
+    Otwórz w przeglądarce: http://127.0.0.1:5002
+
+*   **Aplikacja SRP (Bezpieczna, Port 5000):**
+    ```bash
+    python SRP/app.py
+    ```
+    Otwórz w przeglądarce: http://127.0.0.1:5000
+
+### 2. Uruchomienie Benchmarku (Porównanie prędkości)
+
+Aby zobaczyć różnicę między algorytmami w terminalu:
+
+```bash
+python race.py
+```
+
+### 3. Próba łamania haseł (MD5 Salted)
+
+W katalogu `MD5Salted` znajduje się skrypt, który próbuje złamać hasło użytkownika używając ataku słownikowego i pliku `rockyou.txt`.
+
+```bash
+cd MD5Salted
+python crack.py
+```
+*(Uwaga: Skrypt wymaga obecności pliku `rockyou.txt` w tym samym katalogu).*
